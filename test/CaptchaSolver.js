@@ -90,6 +90,10 @@ class CaptchaSolver {
 
       const sliderContainer = await this.page.$(this.selectors.puzzleImageWrapper)
       const sliderImage = await sliderContainer.screenshot()
+      require("fs").writeFile("./" + currentPosition + "sliderImage.png", sliderImage, 'base64', function (err) {
+        
+      });
+
       const currentImage = await this._getCurrentImage(sliderImage)
 
       const rembrandt = new Rembrandt({
@@ -99,30 +103,6 @@ class CaptchaSolver {
       })
 
       const result = await rembrandt.compare()
-      // const result = await new Promise(resolve => {
-      //   const FormData = require('form-data'); // npm install --save form-data
-      //   var fs = require('fs')
-      //   var axios = require('axios')
-      //   const form = new FormData();
-      //   require("fs").writeFileSync("./start.png", this.startImage, 'base64');
-      //   require("fs").writeFileSync("./currentImage.png", currentImage, 'base64');
-      //   form.append('file', fs.createReadStream('start.png'));
-      //   form.append('file', fs.createReadStream('currentImage.png'));
-
-      //   const request_config = {
-      //     headers: {
-      //       // 'Authorization': `Bearer ${access_token}`,
-      //       ...form.getHeaders()
-      //     }
-      //   };
-
-      //   axios.post('http://localhost:8080/post-test', form, request_config).then(r => {
-      //     console.log(r.data)
-      //     resolve(r.data)
-      //   })
-      // })
-      // console.log('result with http request', result)
-
       const difference = result.percentageDifference * 100
 
       if (target.difference > difference) {
@@ -291,7 +271,7 @@ class CaptchaSolver {
 
       if (contentLength > maxContentLength) {
         maxContentLength = contentLength
-        
+
         this.startImage = await (this.isPlaywright ? response.body() : response.buffer())
         console.log(this.isPlaywright);
       }
